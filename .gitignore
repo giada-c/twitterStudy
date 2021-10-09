@@ -1,8 +1,7 @@
 # My file ignore
 *.csv
 ipynb_output_filter/
-*/otherClass(todo).*
-*/dataframes-old.*
+*todo*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
