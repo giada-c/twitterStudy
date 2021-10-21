@@ -2,6 +2,7 @@
 *.csv
 ipynb_output_filter/
 *todo*
+git_utils.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
