@@ -7,3 +7,10 @@ repos:
         stages: [commit]
         language: system
         entry: jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace
+      
+      - id: jupyter-nb-to-html
+        name: jupyter-nb-to-html
+        files: \.ipynb$
+        stages: [commit]
+        language: system
+        entry: "python create_html_notebooks.py"
