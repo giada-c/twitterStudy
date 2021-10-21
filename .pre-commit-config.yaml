@@ -1,13 +1,6 @@
 repos:
   - repo: local
     hooks:
-      - id: jupyter-nb-to-html
-        name: jupyter-nb-to-html
-        files: \.ipynb$
-        stages: [commit]
-        language: system
-        entry: "python create_html_notebooks.py"
-        
       - id: jupyter-nb-clear-output
         name: jupyter-nb-clear-output
         files: \.ipynb$
