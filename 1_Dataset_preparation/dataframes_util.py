@@ -82,7 +82,7 @@ def suspect_rate(df):
 def retweeted_by_suspect(df, listSuspect):
     dfTweetsSus = df[df.isin(listSuspect)['user_screen_name']]
     dfRetweeted = dfTweetsSus.groupby('rt_user_screen_name').count()['id']
-    return dfRetweeted
+    return dfRetweeted    
 
 
 def retweet_a_suspect(df, listSuspect, minRetweet=10):
@@ -96,3 +96,17 @@ def retweet_a_suspect(df, listSuspect, minRetweet=10):
     dfRetweet = dfRetweet[dfRetweet['total'] >= minRetweet]
 
     return suspect_rate(dfRetweet)
+
+def retweet_rate_novax(df, listnovax, listprovax,min_sum_retweet=10):
+    dfRetweet = pd.DataFrame()
+    
+    dfRetweet['novax'] = df[df.isin(listnovax)['rt_user_screen_name']].groupby('user_screen_name').count()['id']
+    dfRetweet['provax'] = df[df.isin(listprovax)['rt_user_screen_name']].groupby('user_screen_name').count()['id']
+    
+    dfRetweet['sum'] = dfRetweet['novax']+dfRetweet['provax']
+    dfRetweet = dfRetweet[dfRetweet['sum'] >= min_sum_retweet]
+    
+    dfRetweet['novax_perc'] = (dfRetweet['novax'] - dfRetweet['provax']) / dfRetweet['sum']
+    dfRetweet['provax_perc'] = (dfRetweet['provax'] - dfRetweet['novax']) / dfRetweet['sum']
+
+    return dfRetweet
