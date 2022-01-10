@@ -1,6 +1,5 @@
 import pandas as pd
-import plotly.graph_objects as go
-import plotly.express as px
+import matplotlib.pyplot as plt
 
 map_color = {'Provax':'#00CC96','Novax':'#EF553B','Link low credibility':'#FF6692','Not defined':'#636EFA'}
 
@@ -12,7 +11,7 @@ def add_user_type(df,listNovax,listProvax,listLinklow):
         df.at[u,'user_type'] = 'Link low credibility' if u in listLinklow else df.at[u,'user_type']
     return df
 
-def print_histogram_users(df,num_users,col_x,graph_title,col_x_title):
+'''def print_histogram_users(df,num_users,col_x,graph_title,col_x_title):
     fig = go.Figure()
     if num_users>25:
         n = num_users//2
@@ -37,7 +36,20 @@ def print_histogram_users(df,num_users,col_x,graph_title,col_x_title):
     fig.update_xaxes(title=col_x_title)
     fig.update_yaxes(title="Username")
     fig.update_yaxes(categoryorder='total descending')
-    fig.show()
+    fig.show()'''
+
+def print_histogram_users(df,num_users,col_x,graph_title,col_x_title):
+    plt.figure(figsize=(20,num_users/2)) 
+    for n,c in map_color.items():
+        plt.hist([0],color=c,label=n)
+   
+    plt.barh(width=df.head(num_users)[col_x],y=df.head(num_users).index,
+            color=[map_color[i] for i in df.head(num_users)['user_type']])
+    plt.legend()
+    plt.xlabel(col_x_title)
+    plt.ylabel('Username')
+    plt.title(graph_title)
+    plt.show()
 
 
 def get_df_raggruped (df,name_col,name_groupby):
