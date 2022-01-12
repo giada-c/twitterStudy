@@ -9,6 +9,8 @@ import re
 
 import plotly.express as px
 import plotly.graph_objects as go
+from matplotlib.pyplot import figure
+import matplotlib.pyplot as plt
 
 import sys
 
@@ -33,15 +35,11 @@ def visual_histogram(dfHashtags, *arrayUse):
         dfHashtagAbove = dfHashtags.drop(dfHashtags[dfHashtags['count'] < numUse].index)
         if i > 0:
             dfHashtagAbove = dfHashtagAbove.drop(dfHashtags[dfHashtags['count'] > arrayUse[i-1]].index)
-
-        fig = px.histogram(dfHashtagAbove, y=dfHashtagAbove.index, x=dfHashtagAbove['count'],
-                           title="Hashtags over " + str(numUse) + " uses", orientation='h')
-        fig.show()
-
-    dfHashtagUnder = dfHashtags.drop(dfHashtags[dfHashtags['count'] > numUse].index)
-    fig = px.histogram(dfHashtagUnder, y=dfHashtagUnder.index, x=dfHashtagUnder['count'],
-                       title="Hashtags under " + str(numUse) + " uses", orientation='h')
-    fig.show()
+            dfHashtagAbove.plot.barh(figsize=(15,10),legend=None,
+                                     title="Hashtags from " +str(numUse) +" to "+ str(arrayUse[i-1]) + " uses")
+        else:
+            dfHashtagAbove.plot.barh(figsize=(15,10),legend=None,title="Hashtags over " + str(numUse) + " uses")
+        plt.show()
 
 
 def visual_by_date_together(dfHashtags, dfUse, head_count=10, useHead=True):
@@ -49,16 +47,18 @@ def visual_by_date_together(dfHashtags, dfUse, head_count=10, useHead=True):
     if useHead:
         df1 = dfHashtags.head(head_count)
     else:
-        dfHashtags.drop(dfHashtags[dfHashtags['count'] < head_count].index)
-    fig = go.Figure()
-
+        df1 = dfHashtags.drop(dfHashtags[dfHashtags['count'] < head_count].index)
+        
+    figure(figsize=(13, 6), dpi=80)
     for hashtag in df1.index:
         mask = dfUse['hashtag'] == hashtag
-        fig.add_trace(go.Scatter(x=dfUse.loc[mask, 'Week/Year'], y=dfUse.loc[mask, 'count'],
-                                 mode='lines+markers',
-                                 name=hashtag))
-    fig.update_layout(title="History use of hashtags", xaxis_title='Date', yaxis_title='use count')
-    fig.show()
+        plt.plot(dfUse.loc[mask,'Week/Year'], dfUse.loc[mask,'count'],'o-',label=hashtag)
+        
+    plt.legend()   
+    plt.title('History use of hashtags')
+    plt.xlabel('Date')
+    plt.ylabel('Use count')
+    plt.show()
 
 
 def visual_by_date_split(dfHashtags, dfUse, head_count=10, useHead=True):
@@ -66,17 +66,19 @@ def visual_by_date_split(dfHashtags, dfUse, head_count=10, useHead=True):
     if useHead:
         df1 = dfHashtags.head(head_count)
     else:
-        dfHashtags.drop(dfHashtags[dfHashtags['count'] < head_count].index)
+        df1 = dfHashtags.drop(dfHashtags[dfHashtags['count'] < head_count].index)
 
     for hashtag in df1.index:
+        figure(figsize=(13, 6), dpi=80)
         mask = dfUse['hashtag'] == hashtag
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=dfUse.loc[mask, 'Week/Year'], y=dfUse.loc[mask, 'count'],
-                                 mode='lines+markers',
-                                 name=hashtag))
-        fig.update_layout(title="History use of hashtag '%s'" % hashtag, xaxis_title='Date', yaxis_title='use count')
-        fig.show()
 
+        plt.bar(dfUse.loc[mask,'Week/Year'],height=dfUse.loc[mask,'count'],width=5)
+        plt.plot(dfUse.loc[mask,'Week/Year'],dfUse.loc[mask,'count'],color='r',alpha = 0.5)
+        
+        plt.title("History use of hashtag '%s'" % hashtag)
+        plt.xlabel('Date')
+        plt.ylabel('use count')
+        plt.show()
 
 '''
 COMPLETE DATAFRAME STUDY
