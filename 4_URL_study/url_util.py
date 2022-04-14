@@ -103,3 +103,38 @@ def process_dfUse(df, worker=workers):
 
     executor.shutdown()
     return results.sort_values(by='Week/Year')
+
+'''''''''''''''''''''''''Youtube study'''''''''''''''''''''''''''''''
+
+def get_dfYt_line(df,yt_link):
+    dfReturn = df.copy()
+    dfReturn['yt'] = False
+    for i in dfReturn.index:
+        urls = gen_ut.get_string_json(dfReturn.loc[i,'urls'], 'expanded_url')
+        dfReturn.loc[i,'yt'] = any(item in yt_link for item in urls)
+    return dfReturn
+
+'''def get_dfYt_line(df,yt_link):
+    dfReturn = df.copy()
+    dfReturn['is_yt'] = False
+    for i in dfReturn.index:
+        dfReturn.loc[i,'is_yt'] = 'youtu' in dfReturn.loc[i,'urls']
+    return dfReturn'''
+
+
+def process_dfYoutube(df, yt_link,worker=workers):
+    results = pd.DataFrame()
+    executor = ProcessPoolExecutor(max_workers=worker)
+    futures = []
+
+    # multiprocess
+    subchunks = np.array_split(df, workers)
+    for sc in subchunks:
+        futures.append(executor.submit(get_dfYt_line,sc, yt_link))
+    futures_wait(futures)
+    # waits until all futures are completed
+    for fut in futures:
+        results = pd.concat([fut.result(), results], ignore_index=True)
+
+    executor.shutdown()
+    return results

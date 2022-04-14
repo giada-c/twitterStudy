@@ -40,6 +40,7 @@ def concat_base_file(start, file_concat):
         del df1
     return dfStart
 
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 def create_cred_score(tweets_with_urls,threshold=10):
     sum_of_urls_df = tweets_with_urls.groupby(['user_id']).sum()
     cred_score_df = sum_of_urls_df[sum_of_urls_df['HIGH']+sum_of_urls_df['LOW']>=threshold]
@@ -72,6 +73,7 @@ def process_df_url(df, urls):  # TODO real function
     dfUsers = pd.DataFrame()
     return dfUsers.index
 
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 def suspect_rate(df):
     df.loc[df['suspect'].isna(), 'suspect'] = 0
@@ -108,5 +110,5 @@ def retweet_rate_novax(df, listnovax, listprovax,min_sum_retweet=10):
     
     dfRetweet['novax_perc'] = (dfRetweet['novax'] - dfRetweet['provax']) / dfRetweet['sum']
     dfRetweet['provax_perc'] = (dfRetweet['provax'] - dfRetweet['novax']) / dfRetweet['sum']
-
+    
     return dfRetweet
